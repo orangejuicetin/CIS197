@@ -67,8 +67,10 @@ var remove = function (arr, item) {
  * should return [1, 'a']
  */
 var findDuplicates = function (arr) {
-  // Your code goes here
+  var output = [];
+  for (var i = 0; i < arr.length; i++) {
 
+  }
 };
 
 /*
