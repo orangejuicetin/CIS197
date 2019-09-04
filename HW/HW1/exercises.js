@@ -29,15 +29,15 @@
  * Hint: A JavaScript variable `x` is a number if (and only if) typeof x === 'number'.
  */
 var sum = function (arr) {
-  var sum = 0
+  var sum = 0;
   for (var i = 0; i < arr.length; i++) {
     if (typeof x === Number) {
-      sum += x
+      sum += x;
     } else {
-      throw console.error('element is NaN')
+      throw console.error('element is NaN');
     }
   }
-  return sum
+  return sum;
 };
 
 /* Complete the remove function, which takes an array (`arr) and returns
@@ -48,15 +48,15 @@ var sum = function (arr) {
  * If `arr` doesn't contain `item`, return a copy of `arr`.
  */
 var remove = function (arr, item) {
-  var output = []
+  var output = [];
   for (var i = 0; i < arr.length; i++) {
-    if (arr[i] = item) {
-      continue
+    if (arr[i] === item) {
+      continue;
     } else {
-      output.push(arr[i])
+      output.push(arr[i]);
     }
   }
-  return output
+  return output;
 };
 
 /*
@@ -68,8 +68,23 @@ var remove = function (arr, item) {
  */
 var findDuplicates = function (arr) {
   var output = [];
-  for (var i = 0; i < arr.length; i++) {
-
+  if (arr === null) {
+    return output;
+  }
+  if (arr.length == 1) {
+    return output;
+  }
+  for (var i = 0; i < arr.length - 1; i++) {
+    var curr = arr[i];
+    var isDuplicate = false;
+    for (var j = i + 1; j < arr.length; j++) {
+      if (arr[j] === arr[i]) {
+        isDuplicate = true;
+      }
+    }
+    if (isDuplicate === true) {
+      output.push(curr);
+    }
   }
 };
 
@@ -118,8 +133,11 @@ var cart = {
  */
 
 var hasEggs = function () {
-  // Your code goes here
-
+  if (this.eggs > 0) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 /*
@@ -141,8 +159,11 @@ cart.hasEggs = hasEggs;
  * exactly the same as hasEggs, except now it's chocolate.
  */
 var hasChocolate = function () {
-  // Your code goes here
-
+  if (this.chocolate > 0) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 /*
@@ -161,14 +182,21 @@ cart.hasChocolate = hasChocolate;
  * function itself).
  */
 var hasItemMixin = function (itemName) {
-  // Your code goes here
-
+  return function () {
+    if (this[itemName + ''] > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 };
 
 /*
  * Now if we want to write a mixin for milk, we can use our brand-new higher order function!
  */
 cart.hasMilk = hasItemMixin('milk');
+
+// console.log(cart.hasMilk());
 
 /*
  * Now let's write yet another mixin, called getTotalPrice, which will return the price of all
@@ -184,10 +212,30 @@ cart.hasMilk = hasItemMixin('milk');
  * adding up keys that are numbers -- otherwise you'll end up with NaN.
  */
 var getTotalPrice = function () {
-  // Your code goes here
-
+  var listofPrices = Object.keys(pricesObject);
+  var cart_items = Object.keys(this);
+  console.log(cart_items);
+  console.log(listofPrices);
+  var totalPrice = 0;
+  for (var i = 0; i < cart_items.length; i++) {
+    if (listofPrices.includes(cart_items[i])) {
+      var item = cart_items[i];
+      console.log(item);
+      var quantity = this[item + ''];
+      var key = listofPrices.find(function (element) {
+        return element === item;
+      });
+      var price = listofPrices[key + ''];
+      totalPrice += price * quantity;
+    }
+    if (cart_items[i] === 'prices') {
+      break;
+    }
+  }
+  return totalPrice;
 };
-
+cart.getTotalPrice = getTotalPrice
+console.log(cart.getTotalPrice());
 /*
  * Finally, let's say that the store has a mother's day sale. For this sale, if you buy flowers,
  * you get 10% off the total price of your bill. Complete the code for the getSalePrice mixin.
@@ -198,8 +246,10 @@ var getTotalPrice = function () {
  * not be a bad idea to mix it in yourself...
  */
 var getSalePrice = function () {
-  // Your code goes here
-
+  this.hasFlowers = hasItemMixin('flowers');
+  if (this.hasFlowers) {
+    return getTotalPrice() * .90;
+  }
 };
 
 
@@ -223,8 +273,11 @@ var getSalePrice = function () {
  * It applies the mapping function to all elements in the array and returns an array of results.
  */
 var map = function (array, mappingFunction) {
-  // Your code goes here
-
+  var output = [];
+  for (var i = 0; i < array.length; i++) {
+    array.push(mappingFunction(array[i]));
+  }
+  return output;
 };
 
 /*
@@ -233,8 +286,13 @@ var map = function (array, mappingFunction) {
  * elements of the array such that filterFunction(element) === true.
  */
 var filter = function (array, filterFunction) {
-  // Your code goes here
-
+  var output = [];
+  for (var i = 0; i < array.length; i++) {
+    if (filterFunction(array[i]) === true) {
+      output.push(array[i]);
+    }
+  }
+  return output;
 };
 
 /*
@@ -245,8 +303,10 @@ var filter = function (array, filterFunction) {
  * result of reduce is the _final_ aggregate value obtained after processing the last element.
  */
 var reduce = function (array, reductionFunction, seedValue) {
-  // Your code goes here
-
+  if (array == null) {
+    return seedValue;
+  }
+  return reduce(array.pop(), reductionFunction, reductionFunction(seedValue));
 };
 
 /* As it happens, it's possible to obtain map and filter directly from reduce. You're welcome to
@@ -259,7 +319,6 @@ var reduce = function (array, reductionFunction, seedValue) {
  * reverse order (right-to-left).
  */
 var reduceRight = function (array, reductionFunction, seedValue) {
-  // Your code goes here
 
 };
 
