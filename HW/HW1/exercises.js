@@ -212,30 +212,19 @@ cart.hasMilk = hasItemMixin('milk');
  * adding up keys that are numbers -- otherwise you'll end up with NaN.
  */
 var getTotalPrice = function () {
-  var listofPrices = Object.keys(pricesObject);
   var cart_items = Object.keys(this);
-  console.log(cart_items);
-  console.log(listofPrices);
   var totalPrice = 0;
   for (var i = 0; i < cart_items.length; i++) {
-    if (listofPrices.includes(cart_items[i])) {
+    if (typeof this[cart_items[i]] === 'number') {
       var item = cart_items[i];
-      console.log(item);
-      var quantity = this[item + ''];
-      var key = listofPrices.find(function (element) {
-        return element === item;
-      });
-      var price = listofPrices[key + ''];
-      totalPrice += price * quantity;
+      var quantity = this[item];
+      var price = this[cart_items[cart_items.indexOf('prices')]][item]
+      totalPrice += quantity * price;
     }
-    if (cart_items[i] === 'prices') {
-      break;
-    }
+    return totalPrice;
   }
-  return totalPrice;
 };
-cart.getTotalPrice = getTotalPrice
-console.log(cart.getTotalPrice());
+
 /*
  * Finally, let's say that the store has a mother's day sale. For this sale, if you buy flowers,
  * you get 10% off the total price of your bill. Complete the code for the getSalePrice mixin.
@@ -247,8 +236,11 @@ console.log(cart.getTotalPrice());
  */
 var getSalePrice = function () {
   this.hasFlowers = hasItemMixin('flowers');
+  var price = this.getTotalPrice();
   if (this.hasFlowers) {
-    return getTotalPrice() * .90;
+    return price * .90;
+  } else {
+    return price;
   }
 };
 
@@ -287,11 +279,9 @@ var map = function (array, mappingFunction) {
  */
 var filter = function (array, filterFunction) {
   var output = [];
-  for (var i = 0; i < array.length; i++) {
-    if (filterFunction(array[i]) === true) {
-      output.push(array[i]);
-    }
-  }
+  array.forEach(function (input) {
+    output.push(mappingFunction(input))
+  });
   return output;
 };
 
@@ -303,10 +293,11 @@ var filter = function (array, filterFunction) {
  * result of reduce is the _final_ aggregate value obtained after processing the last element.
  */
 var reduce = function (array, reductionFunction, seedValue) {
-  if (array == null) {
-    return seedValue;
-  }
-  return reduce(array.pop(), reductionFunction, reductionFunction(seedValue));
+  var item = seedValue;
+  array.forEach(function (input) {
+    item = reductionFunction(input, item);
+  });
+  return item;
 };
 
 /* As it happens, it's possible to obtain map and filter directly from reduce. You're welcome to
@@ -319,8 +310,13 @@ var reduce = function (array, reductionFunction, seedValue) {
  * reverse order (right-to-left).
  */
 var reduceRight = function (array, reductionFunction, seedValue) {
-
+  var item = seedValue;
+  for (var i = array.length - 1; i >= 0; i--) {
+    item = reductionFunction(array[i], item);
+  };
+  return item;
 };
+
 
 /*
  * ==========================================================================
@@ -361,7 +357,39 @@ var reduceRight = function (array, reductionFunction, seedValue) {
  */
 
 var stringify = function (object) {
-  // Your code goes here
+  var output = '';
+  if (object === null) {
+    output = 'null';
+  } else if (typeof object === 'undefined') {
+    output = 'undefined';
+  } else if (typeof object === 'boolean') {
+    output = object + ''; // boolean becomes a string
+  } else if (typeof object === 'number') {
+    output = object + ''; // number becomes string
+  } else if (typeof object == 'string') {
+    output = '\'' + object + '\'';
+  } else if (Array.isArray(object)) {
+    output += '[';
+    for (var i = 0; i < object.length; i++) {
+      output += stringify(object[i]);
+      if (i != object.length - 1) {
+        output += ', '
+      }
+    }
+    str += ']';
+  } else if (typeof object === 'object') {
+    output += '{';
+    var keySet = Object.keys(object);
+    for (var i = 0; i < keySet.length; i++) {
+      output += keySet[i] + ': ';
+      output += stringify(object[keySet[i]]);
+      if (i != keySet.length - 1) {
+        output += ', ';
+      }
+    }
+    output += '}';
+  }
+  return output;
 };
 
 /*
