@@ -280,7 +280,7 @@ var map = function (array, mappingFunction) {
 var filter = function (array, filterFunction) {
   var output = [];
   array.forEach(function (input) {
-    output.push(mappingFunction(input))
+    output.push(filterFunction(input));
   });
   return output;
 };
@@ -313,7 +313,7 @@ var reduceRight = function (array, reductionFunction, seedValue) {
   var item = seedValue;
   for (var i = array.length - 1; i >= 0; i--) {
     item = reductionFunction(array[i], item);
-  };
+  }
   return item;
 };
 
