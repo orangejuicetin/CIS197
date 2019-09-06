@@ -31,8 +31,8 @@
 var sum = function (arr) {
   var sum = 0;
   for (var i = 0; i < arr.length; i++) {
-    if (typeof x === Number) {
-      sum += x;
+    if (typeof arr[i] === Number) {
+      sum += arr[i];
     } else {
       throw console.error('element is NaN');
     }
@@ -376,14 +376,14 @@ var stringify = function (object) {
         output += ', '
       }
     }
-    str += ']';
+    output += ']';
   } else if (typeof object === 'object') {
     output += '{';
     var keySet = Object.keys(object);
-    for (var i = 0; i < keySet.length; i++) {
-      output += keySet[i] + ': ';
-      output += stringify(object[keySet[i]]);
-      if (i != keySet.length - 1) {
+    for (var j = 0; j < keySet.length; j++) {
+      output += keySet[j] + ': ';
+      output += stringify(object[keySet[j]]);
+      if (j != keySet.length - 1) {
         output += ', ';
       }
     }
