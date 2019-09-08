@@ -34,7 +34,7 @@ var sum = function (arr) {
     if (typeof arr[i] === 'number') {
       sum += arr[i];
     } else {
-      throw console.error('element is NaN');
+      throw new Error('element is NaN');
     }
   }
   return sum;
@@ -218,7 +218,7 @@ var getTotalPrice = function () {
     if (typeof this[cart_items[i]] === 'number') {
       var item = cart_items[i];
       var quantity = this[item];
-      var price = this[cart_items[cart_items.indexOf('prices')]][item]
+      var price = this.prices[item];
       totalPrice += quantity * price;
     }
     return totalPrice;
@@ -267,7 +267,7 @@ var getSalePrice = function () {
 var map = function (array, mappingFunction) {
   var output = [];
   for (var i = 0; i < array.length; i++) {
-    array.push(mappingFunction(array[i]));
+    output.push(mappingFunction(array[i]));
   }
   return output;
 };
