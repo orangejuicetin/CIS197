@@ -7,6 +7,8 @@ var pullTrendingArticles = function (callback) {
     // note that error will be NOT null if the request.statusCode is 200. Otherwise, there will be an error
     if (!error && response.statusCode === 200) {
       callback(null, response, body);
+    } else {
+      callback(new Error('Request did not succeed'), response.statusCode, body);
     }
   })
 };
