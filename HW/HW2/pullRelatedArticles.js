@@ -4,7 +4,7 @@ var nyt = require('./api/nyt');
 // the JSON metadata
 var pullRelatedArticles = function (query, callback) {
   nyt.articleSearch(query, function (error, response, body) {
-    // Your code goes here
+
   });
 };
 
