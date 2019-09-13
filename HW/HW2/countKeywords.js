@@ -5,39 +5,53 @@ var sax = require('sax');
 var countKeywords = function (POPULAR_XML, callback) {
   // Create a SAX XML parser. The "false" argument indicates it won't accept invalid XML.
   var parser = sax.parser(false);
-  var keywords = new Object();
+  var keywords = {};
+  var isInADX = false; // indicator variable that tells you whether or not you're in the adx_keywords tag
 
   parser.onerror = function (e) {
     callback(e);
   };
 
   parser.ontext = function (t) {
-    var text = t.trim();
-    var keyWordsArray = text.split(';');
-    for (var keyword in keyWordsArray) {
-      if (keywords[keyword] === null) {
-        keywords[keyword] = 1;
-      } else {
-        keywords[keyword]++;
+    console.log('on text')
+    if (isInADX) {
+      var keyWordsArray = t.split(';');
+      console.log('IS IN ADX, KEYWORDS', keyWordsArray)
+      for (var i = 0; i < keyWordsArray.length; i++) {
+        var word = keyWordsArray[i].trim();
+        if (word in keywords) {
+          keywords[word] = keywords[word]++;
+        } else {
+          keywords[word] = 1;
+        }
       }
     }
   };
 
   parser.onopentag = function (node) {
-    if (node.name == 'ADX_KEYWORDS') {
-      keywords.bind(this.parser.ontext());
+    if (node.name === 'ADX_KEYWORDS') {
+      isInADX = true;
     }
   };
 
   parser.onclosetag = function (node) {
-
+    isInADX = false;
   };
 
   // HINT: the 'end' event happens only when the XML parser is finished.
   // This means you should be able to finalize your top keywords and call
   // the callback from this function!
   parser.onend = function () {
-    callback(null, , )
+    var output = [];
+    var keys = Object.keys(keywords);
+    console.log('KEYSS: ', keys)
+    keys.sort(function (a, b) {
+      return keywords[b] - keywords[a];
+    })
+    for (var i = 0; i < 5; i++) {
+      output.push(keys[i]);
+    }
+    callback(null, output);
   };
 
   // Kick off the parser with the input XML.
