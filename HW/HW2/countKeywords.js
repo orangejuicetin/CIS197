@@ -45,12 +45,9 @@ var countKeywords = function (POPULAR_XML, callback) {
     keys.sort(function (a, b) {
       return keywords[b] - keywords[a];
     })
-    for (var i = 0; i < 5; i++) {
-      output.push(keys[i]);
-    }
-    callback(null, output);
+    // return first 5 (if less than five, take whatever the array size is)
+    callback(null, output.slice(0, Math.min(5, output.length)));
   };
-
   // Kick off the parser with the input XML.
   parser.write(POPULAR_XML).close();
 };
