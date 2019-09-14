@@ -25,8 +25,14 @@ var displayRelatedArticles = function (error, relatedArticles) {
 
 // Final method: try to use async.waterfall. Errors are handled in the callback.
 var getTrendingKeywords = function (callback) {
-  // Your code goes here
-
+  async.waterfall([pullTrendingArticles, countKeywords, processKeywords],
+    function (error, output) {
+      if (!error) {
+        callback(null, output);
+      } else {
+        callback(error);
+      }
+    });
 };
 
 // This block allows you to test your code by running

@@ -13,10 +13,8 @@ var countKeywords = function (POPULAR_XML, callback) {
   };
 
   parser.ontext = function (t) {
-    console.log('on text')
     if (isInADX) {
       var keyWordsArray = t.split(';');
-      console.log('IS IN ADX, KEYWORDS', keyWordsArray)
       for (var i = 0; i < keyWordsArray.length; i++) {
         var word = keyWordsArray[i].trim();
         if (word in keywords) {
@@ -44,7 +42,6 @@ var countKeywords = function (POPULAR_XML, callback) {
   parser.onend = function () {
     var output = [];
     var keys = Object.keys(keywords);
-    console.log('KEYSS: ', keys)
     keys.sort(function (a, b) {
       return keywords[b] - keywords[a];
     })
