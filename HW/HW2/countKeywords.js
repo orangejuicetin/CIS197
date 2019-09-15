@@ -17,10 +17,10 @@ var countKeywords = function (POPULAR_XML, callback) {
       var keyWordsArray = t.split(';');
       for (var i = 0; i < keyWordsArray.length; i++) {
         var word = keyWordsArray[i].trim();
-        if (word in keywords) {
-          keywords[word] = keywords[word]++;
-        } else {
+        if (keywords[word] == undefined) {
           keywords[word] = 1;
+        } else {
+          keywords[word] += 1;
         }
       }
     }
@@ -40,13 +40,12 @@ var countKeywords = function (POPULAR_XML, callback) {
   // This means you should be able to finalize your top keywords and call
   // the callback from this function!
   parser.onend = function () {
-    var output = [];
     var keys = Object.keys(keywords);
     keys.sort(function (a, b) {
       return keywords[b] - keywords[a];
     })
     // return first 5 (if less than five, take whatever the array size is)
-    callback(null, output.slice(0, Math.min(5, output.length)));
+    callback(null, keys.slice(0, 5));
   };
   // Kick off the parser with the input XML.
   parser.write(POPULAR_XML).close();
