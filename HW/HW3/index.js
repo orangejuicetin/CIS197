@@ -40,11 +40,19 @@ class Snake {
    * @param int h the number of rows in the board
    * @returns void
    */
-  constructor (w, h) {
+  constructor(w, h) {
     if (!w || !h) {
       throw new Error("You're missing either height or width")
     }
-
+    const head = { x: Math.floor(w / 2), y: Math.floor(h / 2) };
+    this.body.push(head);
+    for (let i = 0; i < 4; i++) {
+      const piece = { x: head.x, y: (head.y + i) };
+      this.body.push(piece);
+    }
+    this.direction = UP;
+    this.move = this.move.bind(this);
+    this.changeDirection = this.changeDirection.bind(this);
   }
 
 
@@ -55,7 +63,34 @@ class Snake {
    *                      elongated by one square
    * @returns void
    */
-  move (grow) {
+  move(grow) {
+    if (grow) {
+      let head = this.body[0];
+      if (this.direction === UP) {
+        this.body.unshift({ x: head.x, y: head.y++ });
+      } else if (this.direction === DOWN) {
+        this.body.unshift({ x: head.x, y: head.y-- });
+      } else if (this.direction === RIGHT) {
+        this.body.unshift({ x: head.x++, y: head.y });
+      } else {
+        this.body.unshift({ x: head.x--, y: head.y++ });
+      }
+    } else {
+      let head = this.body[0];
+      if (this.direction === UP) {
+        this.body.unshift({ x: head.x, y: head.y++ });
+        this.body.pop();
+      } else if (this.direction === DOWN) {
+        this.body.unshift({ x: head.x, y: head.y-- });
+        this.body.pop();
+      } else if (this.direction === RIGHT) {
+        this.body.unshift({ x: head.x++, y: head.y });
+        this.body.pop();
+      } else {
+        this.body.unshift({ x: head.x--, y: head.y++ });
+        this.body.pop();
+      }
+    }
   }
 
 
@@ -72,12 +107,38 @@ class Snake {
    * @param String direction
    * @returns void
    */
-  changeDirection (direction) {
+  changeDirection(direction) {
     const directions = [UP, DOWN, LEFT, RIGHT]
-
     // throws error if no direction provided
+    if (!(direction in directions)) {
+      throw new Error('invalid direction');
+    }
     // if direction, change snake's direction
-
+    if (direction === UP) {
+      if (this.direction === DOWN) {
+        return;
+      } else {
+        this.direction = direction;
+      }
+    } else if (direction === DOWN) {
+      if (this.direction === UP) {
+        return;
+      } else {
+        this.direction = direction;
+      }
+    } else if (direction === RIGHT) {
+      if (this.direction === LEFT) {
+        return;
+      } else {
+        this.direction = direction;
+      }
+    } else if (direction === LEFT) {
+      if (this.direction === RIGHT) {
+        return;
+      } else {
+        this.direction = direction;
+      }
+    }
   }
 }
 
@@ -94,7 +155,7 @@ class Game {
    * @param int height
    * @returns void
    */
-  constructor (w, h, fr) {
+  constructor(w, h, fr) {
     if (!w || !h) {
       throw new Error("You're missing either height or width")
     }
@@ -124,7 +185,8 @@ class Game {
    * @param void
    * @returns void
    */
-  spawnFood () {
+  spawnFood() {
+
   }
 
   /**
@@ -136,7 +198,7 @@ class Game {
    * @param void
    * @returns void
    */
-  checkCollision () {
+  checkCollision() {
   }
 
   /**
@@ -147,7 +209,7 @@ class Game {
    * @param void
    * @returns true if snake head on food else false
    */
-  shouldGrow () {
+  shouldGrow() {
   }
 
   /**
@@ -158,7 +220,7 @@ class Game {
    * @param void
    * @returns void
    */
-  updateGameState () {
+  updateGameState() {
 
     dispatchChangeGameState(this.snake, this.food)
   }
@@ -169,7 +231,7 @@ class Game {
    * @param void
    * @returns void
    */
-  startGame () {
+  startGame() {
     dispatchStartGame()
   }
 
@@ -179,7 +241,7 @@ class Game {
    * @param void
    * @returns void
    */
-  endGame () {
+  endGame() {
     dispatchEndGame()
 
   }
@@ -191,7 +253,7 @@ class Game {
    * @param void
    * @returns void
    */
-  reset () {
+  reset() {
     if (this.playing) {
       this.playing = false
       this.snake = new Snake(this.width, this.height)
@@ -218,22 +280,22 @@ const game = new Game(width, height, frameRate)
  * @returns void
  */
 
-function onKeyDownGenerator (game) {
+function onKeyDownGenerator(game) {
   return function (event) {
     if (event.key === 'r') {
       game.reset()
       return
     }
-  
+
     if (!game.playing) { // If the game has not yet started
       if (event.key === ' ') game.startGame()
       return
     }
-  
+
   }
 }
 
-const reset = function reset () {
+const reset = function reset() {
   game.reset()
 }
 
