@@ -186,7 +186,7 @@ class Game {
    * @returns void
    */
   spawnFood() {
-
+    this.food = { x: (Math.random() * this.width), y: (Math.random() * this.height) }
   }
 
   /**
@@ -199,6 +199,16 @@ class Game {
    * @returns void
    */
   checkCollision() {
+    const head = this.snake.body[0];
+    if (head.x === 0 || head.x === this.width) {
+      this.endGame()
+    } else if (head.y === 0 || head.y === this.height) {
+      this.endGame()
+    } else if (head in this.snake.body) {
+      this.endGame()
+    } else {
+      return
+    }
   }
 
   /**
@@ -210,6 +220,10 @@ class Game {
    * @returns true if snake head on food else false
    */
   shouldGrow() {
+    if (this.snake.body[0] === this.food) {
+      return true;=
+    }
+    return false
   }
 
   /**
@@ -221,7 +235,6 @@ class Game {
    * @returns void
    */
   updateGameState() {
-
     dispatchChangeGameState(this.snake, this.food)
   }
 
@@ -233,6 +246,8 @@ class Game {
    */
   startGame() {
     dispatchStartGame()
+    this.playing = true
+    this.gameInterval.setInterval(this.updateGameState, this.frameRate)
   }
 
   /**
@@ -243,7 +258,8 @@ class Game {
    */
   endGame() {
     dispatchEndGame()
-
+    this.playing = false;
+    this.gameInterval.clearInterval();
   }
 
   /**
