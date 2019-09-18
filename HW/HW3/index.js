@@ -44,15 +44,16 @@ class Snake {
     if (!w || !h) {
       throw new Error("You're missing either height or width")
     }
-    const head = { x: Math.floor(w / 2), y: Math.floor(h / 2) };
-    this.body.push(head);
-    for (let i = 0; i < 4; i++) {
-      const piece = { x: head.x, y: (head.y + i) };
-      this.body.push(piece);
+    const head = { x: Math.floor(w / 2), y: Math.floor(h / 2) }
+    this.body = []
+    this.body.push(head)
+    for (let i = 1; i < 5; i++) {
+      const piece = { x: head.x, y: (head.y + i) }
+      this.body.push(piece)
     }
-    this.direction = UP;
-    this.move = this.move.bind(this);
-    this.changeDirection = this.changeDirection.bind(this);
+    this.direction = UP
+    this.move = this.move.bind(this)
+    this.changeDirection = this.changeDirection.bind(this)
   }
 
 
@@ -64,32 +65,23 @@ class Snake {
    * @returns void
    */
   move(grow) {
-    if (grow) {
-      let head = this.body[0];
-      if (this.direction === UP) {
-        this.body.unshift({ x: head.x, y: head.y++ });
-      } else if (this.direction === DOWN) {
-        this.body.unshift({ x: head.x, y: head.y-- });
-      } else if (this.direction === RIGHT) {
-        this.body.unshift({ x: head.x++, y: head.y });
-      } else {
-        this.body.unshift({ x: head.x--, y: head.y++ });
-      }
-    } else {
-      let head = this.body[0];
-      if (this.direction === UP) {
-        this.body.unshift({ x: head.x, y: head.y++ });
-        this.body.pop();
-      } else if (this.direction === DOWN) {
-        this.body.unshift({ x: head.x, y: head.y-- });
-        this.body.pop();
-      } else if (this.direction === RIGHT) {
-        this.body.unshift({ x: head.x++, y: head.y });
-        this.body.pop();
-      } else {
-        this.body.unshift({ x: head.x--, y: head.y++ });
-        this.body.pop();
-      }
+    // try splitting the head attach side, use concat
+    if (!grow) {
+      this.body.pop()
+    }
+    let head = this.body[0];
+    if (this.direction === UP) {
+      let newHead = [{ x: head.x, y: head.y-- }]
+      this.body = newHead.concat(this.body)
+    } else if (this.direction === DOWN) {
+      let newHead = [{ x: head.x, y: head.y++ }]
+      this.body = newHead.concat(this.body)
+    } else if (this.direction === RIGHT) {
+      let newHead = [{ x: head.x++, y: head.y }]
+      this.body = newHead.concat(this.body)
+    } else if (this.direction === LEFT) {
+      let newHead = [{ x: head.x--, y: head.y }]
+      this.body = newHead.concat(this.body)
     }
   }
 
@@ -110,33 +102,25 @@ class Snake {
   changeDirection(direction) {
     const directions = [UP, DOWN, LEFT, RIGHT]
     // throws error if no direction provided
-    if (!(direction in directions)) {
-      throw new Error('invalid direction');
+    if (!(directions.includes(direction))) {
+      throw new Error('invalid direction')
     }
     // if direction, change snake's direction
     if (direction === UP) {
-      if (this.direction === DOWN) {
-        return;
-      } else {
-        this.direction = direction;
+      if (this.direction !== DOWN) {
+        this.direction = direction
       }
     } else if (direction === DOWN) {
-      if (this.direction === UP) {
-        return;
-      } else {
-        this.direction = direction;
+      if (this.direction !== UP) {
+        this.direction = direction
       }
     } else if (direction === RIGHT) {
-      if (this.direction === LEFT) {
-        return;
-      } else {
-        this.direction = direction;
+      if (this.direction !== LEFT) {
+        this.direction = direction
       }
     } else if (direction === LEFT) {
-      if (this.direction === RIGHT) {
-        return;
-      } else {
-        this.direction = direction;
+      if (this.direction !== RIGHT) {
+        this.direction = direction
       }
     }
   }
@@ -186,7 +170,7 @@ class Game {
    * @returns void
    */
   spawnFood() {
-    this.food = { x: (Math.random() * this.width), y: (Math.random() * this.height) }
+    this.food = { x: Math.round(Math.random() * this.width), y: Math.round(Math.random() * this.height) }
   }
 
   /**
@@ -196,19 +180,22 @@ class Game {
    * snake head hits any other piece of the snake body
    *
    * @param void
-   * @returns void
+   * @returns boolean
    */
   checkCollision() {
-    const head = this.snake.body[0];
-    if (head.x === 0 || head.x === this.width) {
-      this.endGame()
-    } else if (head.y === 0 || head.y === this.height) {
-      this.endGame()
-    } else if (head in this.snake.body) {
-      this.endGame()
-    } else {
-      return
+    let head = this.snake.body[0]
+    if (head.x < 0 || head.x > this.width - 1) {
+      return true
+    } else if (head.y < 0 || head.y > this.height - 1) {
+      return true
     }
+    for (let i = 1; i < this.snake.body.length; i++) {
+      let item = this.snake.body[i]
+      if (head.x === item.x && head.y === item.y) {
+        return true
+      }
+    }
+    return false
   }
 
   /**
@@ -220,8 +207,10 @@ class Game {
    * @returns true if snake head on food else false
    */
   shouldGrow() {
-    if (this.snake.body[0] === this.food) {
-      return true;=
+    let head = this.snake.body[0]
+    if (head.x === this.food.x && head.y === this.food.y) {
+      this.spawnFood()
+      return true
     }
     return false
   }
@@ -235,6 +224,11 @@ class Game {
    * @returns void
    */
   updateGameState() {
+    this.snake.move(this.shouldGrow())
+    this.keyPressed = false
+    if (this.checkCollision()) {
+      this.endGame()
+    }
     dispatchChangeGameState(this.snake, this.food)
   }
 
@@ -247,7 +241,7 @@ class Game {
   startGame() {
     dispatchStartGame()
     this.playing = true
-    this.gameInterval.setInterval(this.updateGameState, this.frameRate)
+    this.gameInterval = setInterval(this.updateGameState, frameRate)
   }
 
   /**
@@ -258,8 +252,8 @@ class Game {
    */
   endGame() {
     dispatchEndGame()
-    this.playing = false;
-    this.gameInterval.clearInterval();
+    this.playing = false
+    clearInterval(this.gameInterval)
   }
 
   /**
@@ -302,12 +296,36 @@ function onKeyDownGenerator(game) {
       game.reset()
       return
     }
-
     if (!game.playing) { // If the game has not yet started
       if (event.key === ' ') game.startGame()
       return
     }
-
+    if (!game.keyPressed) {
+      if (event.key === 'ArrowUp') {
+        game.keyPressed = true
+        game.snake.changeDirection(UP)
+        game.updateGameState()
+        return
+      } else if (event.key === 'ArrowDown') {
+        game.keyPressed = true
+        game.snake.changeDirection(DOWN)
+        game.updateGameState()
+        return
+      } else if (event.key === 'ArrowLeft') {
+        game.keyPressed = true
+        game.snake.changeDirection(LEFT)
+        game.updateGameState()
+        return
+      } else if (event.key === 'ArrowRight') {
+        game.keyPressed = true
+        game.snake.changeDirection(RIGHT)
+        game.updateGameState()
+        return
+      } else {
+        game.updateGameState()
+        return
+      }
+    }
   }
 }
 
