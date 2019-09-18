@@ -44,12 +44,12 @@ class Snake {
     if (!w || !h) {
       throw new Error("You're missing either height or width")
     }
-    const head = { x: Math.floor(w / 2), y: Math.floor(h / 2) }
+    let head = { x: Math.floor(w / 2), y: Math.floor(h / 2) }
     this.body = []
-    this.body.push(head)
+    this.body.push(head) // create head
     for (let i = 1; i < 5; i++) {
-      const piece = { x: head.x, y: (head.y + i) }
-      this.body.push(piece)
+      let piece = { x: head.x, y: (head.y + i) }
+      this.body.push(piece) // initialize rest of snake body 
     }
     this.direction = UP
     this.move = this.move.bind(this)
@@ -70,18 +70,19 @@ class Snake {
       this.body.pop()
     }
     let head = this.body[0];
+    let attach = this.body;
     if (this.direction === UP) {
-      let newHead = [{ x: head.x, y: head.y-- }]
-      this.body = newHead.concat(this.body)
+      let newHead = [{ x: head.x, y: head.y - 1 }]
+      this.body = newHead.concat(attach)
     } else if (this.direction === DOWN) {
-      let newHead = [{ x: head.x, y: head.y++ }]
-      this.body = newHead.concat(this.body)
+      let newHead = [{ x: head.x, y: head.y + 1 }]
+      this.body = newHead.concat(attach)
     } else if (this.direction === RIGHT) {
-      let newHead = [{ x: head.x++, y: head.y }]
-      this.body = newHead.concat(this.body)
+      let newHead = [{ x: head.x + 1, y: head.y }]
+      this.body = newHead.concat(attach)
     } else if (this.direction === LEFT) {
-      let newHead = [{ x: head.x--, y: head.y }]
-      this.body = newHead.concat(this.body)
+      let newHead = [{ x: head.x - 1, y: head.y }]
+      this.body = newHead.concat(attach)
     }
   }
 
@@ -105,7 +106,6 @@ class Snake {
     if (!(directions.includes(direction))) {
       throw new Error('invalid direction')
     }
-    // if direction, change snake's direction
     if (direction === UP) {
       if (this.direction !== DOWN) {
         this.direction = direction
@@ -224,7 +224,8 @@ class Game {
    * @returns void
    */
   updateGameState() {
-    this.snake.move(this.shouldGrow())
+    let grow = this.shouldGrow();
+    this.snake.move(grow)
     this.keyPressed = false
     if (this.checkCollision()) {
       this.endGame()
@@ -252,7 +253,6 @@ class Game {
    */
   endGame() {
     dispatchEndGame()
-    this.playing = false
     clearInterval(this.gameInterval)
   }
 
@@ -304,25 +304,20 @@ function onKeyDownGenerator(game) {
       if (event.key === 'ArrowUp') {
         game.keyPressed = true
         game.snake.changeDirection(UP)
-        game.updateGameState()
         return
       } else if (event.key === 'ArrowDown') {
         game.keyPressed = true
         game.snake.changeDirection(DOWN)
-        game.updateGameState()
         return
       } else if (event.key === 'ArrowLeft') {
         game.keyPressed = true
         game.snake.changeDirection(LEFT)
-        game.updateGameState()
         return
       } else if (event.key === 'ArrowRight') {
         game.keyPressed = true
         game.snake.changeDirection(RIGHT)
-        game.updateGameState()
         return
       } else {
-        game.updateGameState()
         return
       }
     }
