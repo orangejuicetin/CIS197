@@ -247,7 +247,7 @@ class Game {
 
   /**
    * End the game and dispatch the corresponding action on the frontend
-   *
+   *git
    * @param void
    * @returns void
    */
