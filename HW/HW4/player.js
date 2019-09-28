@@ -2,7 +2,7 @@
 /*globals $ */
 
 // The size of a swatch (in pixels)
-var SWATCH_SIZE = 25
+var SWATCH_SIZE = 25;
 
 // Utility function - checks if a given swatch name is walkable terrain.
 var isTerrain = function(swatchType) {
@@ -30,10 +30,10 @@ var isTerrain = function(swatchType) {
       'sand-nw-inverse',
       'sand-ne-inverse',
       'sand-sw-inverse',
-      'sand-se-inverse',
+      'sand-se-inverse'
     ].indexOf(swatchType) >= 0
-  )
-}
+  );
+};
 
 /*
  * Constructor for the player (Pikachu sprite).
@@ -45,8 +45,8 @@ var isTerrain = function(swatchType) {
  * as a property so the '.map' div can be found using a jQuery 'find' call.
  */
 var Player = function(x, y, builder) {
-  this.builder = builder
-  this.$map = builder.$elem.find('.map')
+  this.builder = builder;
+  this.$map = builder.$elem.find('.map');
 
   // TODO: Initialize the player class. You'll need to
   // 1. Create an element for the player and add it to the DOM, with a class
@@ -58,4 +58,8 @@ var Player = function(x, y, builder) {
   // You are highly encouraged to implement helper methods. See the class
   // website for more details.
 
-}
+  var $player = $('<div>').addClass('player facing-down');
+  $('.player').css('left', x * SWATCH_SIZE + 'px');
+  $('.player').css('top', y * SWATCH_SIZE + 'px');
+  this.$map.append($player);
+};
