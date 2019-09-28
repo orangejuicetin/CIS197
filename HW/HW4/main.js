@@ -2,7 +2,7 @@
 /*eslint-env browser */
 /*globals $, MapBuilder, Player */
 
-$(document).ready(function() {
+$(document).ready(function () {
   var $mapElement = $('#map-builder')
   var builder = new MapBuilder($mapElement)
   builder.setupPalette()

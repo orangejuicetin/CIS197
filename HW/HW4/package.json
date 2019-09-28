@@ -8,9 +8,11 @@
     "zip": "node ./scripts/zip"
   },
   "devDependencies": {
+    "eslint": "^6.4.0",
     "grunt": "^0.4.5"
   },
   "dependencies": {
-    "archiver": "^3.1.1"
+    "archiver": "^3.1.1",
+    "yarn": "^1.17.3"
   }
 }
