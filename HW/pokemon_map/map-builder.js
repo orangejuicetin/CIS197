@@ -20,18 +20,13 @@ var MapBuilder = function($container, params) {
 MapBuilder.prototype.setupPalette = function() {
   this.$palette = this.$elem.find('.palette');
   var self = this;
-  this.$palette.click(function(e) {
+  $('.swatch').click(function() {
     $('.selected').removeClass('selected');
-    self.$curr = e.target;
-    $(self.$curr).addClass('selected');
-    self.selectedSwatchName = getSwatchName(self.$curr, 1);
+    var $curr = $(this);
+    $curr.addClass('selected');
+    self.selectedSwatchName = $curr.get(0).classList[1];
   });
 };
-
-// var getFullSwatchName = function(input) {
-//   // takes full class name of event target
-//   return input.classList.value;
-// };
 
 var getSwatchName = function(input, index) {
   // takes part of the class name of event target
@@ -47,28 +42,20 @@ MapBuilder.prototype.setupMapCanvas = function() {
     // for handling mouse hovers
     var $this = e.target;
     var currName = getSwatchName($this, $this.classList.length - 1);
-    $($this).attr('data-appearance', currName);
+    $($this).data('original', currName);
     if (self.selectedSwatchName !== undefined) {
       $($this).attr('class', 'tile swatch' + ' ' + self.selectedSwatchName);
-    }
-    if (e.which === 1) {
-      onMouseDown(e);
-    }
-  }
-
-  function onMouseDown(e) {
-    // if left button is pressed
-    var $this = e.target;
-    if (self.selectedSwatchName !== undefined) {
-      $($this).attr('data-appearance', self.selectedSwatchName);
-      $($this).attr('class', 'tile swatch' + ' ' + self.selectedSwatchName);
+      if (e.which === 1) {
+        $($this).data('original', self.selectedSwatchName);
+      }
     }
   }
 
   function onMouseOut(e) {
     // when the mouse leaves
     var $this = e.target;
-    $($this).attr('class', 'tile swatch' + ' ' + $($this).data('appearance'));
+    $($this).removeClass($($this).attr('class'));
+    $($this).addClass('tile swatch ' + $($this).data('original'));
   }
 
   for (var i = 0; i < this.height; i++) {
@@ -76,11 +63,15 @@ MapBuilder.prototype.setupMapCanvas = function() {
     for (var j = 0; j < this.width; j++) {
       var $grassSwatch = $("<div class='tile swatch grass'></div>");
       $($grassSwatch).on('mouseenter', onMouseEnter);
-      $($grassSwatch).on('mousedown', onMouseDown);
       $($grassSwatch).on('mouseout', onMouseOut);
+      $($grassSwatch).on('mousedown', function() {
+        var $this = $(this);
+        $($this).removeClass($this.attr('class'));
+        $($this).addClass('tile swatch ' + $($this).data('original'));
+        $($this).data('original', self.selectedSwatchName);
+      });
       $($newRow).append($grassSwatch);
     }
     $(this.$map).append($newRow);
   }
-  console.log(this.$map);
 };

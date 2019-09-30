@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>cis197 piazza lite</title>
+  </head>
+  <body>
+    <form method="POST">
+      Question: <br />
+      <input type="text" name="question" />
+      <br />
+      <button type="submit">Add question</button>
+    </form>
+    <a href="/account/login">Log in</a> to submit a question
+    <ul>
+      <% for (q in questions) { %>
+      <li><%= questions[q] %></li>
+      <% } %>
+    </ul>
+  </body>
+</html>
