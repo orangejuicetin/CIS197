@@ -7,11 +7,16 @@
 // - various other file imports
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var Question = require('/models/question');
 
-// instantiate express app...TODO: make sure that you have required express
+// instantiate express app
 var app = express();
+
 // instantiate a mongoose connect call
-// mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/hw5-new')
+mongoose.connect(
+  process.env.MONGODB_URI || 'mongodb://localhost:27017/hw5-new'
+);
 
 // set the express view engine to take care of ejs within html files
 app.engine('html', require('ejs').__express);
