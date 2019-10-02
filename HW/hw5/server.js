@@ -67,7 +67,7 @@ app.post('/', isAuthenticated, function(req, res, next) {
 app.use('/account', accountRoutes);
 
 // don't put any routes below here!
-app.use(function(err, _, res, _) {
+app.use(function(err, res) {
   return res.send('ERROR :  ' + err.message);
 });
 
