@@ -30,7 +30,7 @@ router.use(
 router.get('/signup', function(req, res) {
   // debug check for all signed up users
   User.find({}, function(err, results) {
-    console.log('existing users: ', results);
+    console.log('existing users: ' + results);
   });
   res.render('signup');
 });
@@ -47,12 +47,12 @@ router.get('/logout', isAuthenticated, function(req, res) {
 router.post('/signup', function(req, res, next) {
   var { username, password } = req.body;
   var u = new User({ username, password });
-  console.log('user', u);
+  console.log('user: ', u);
   u.save(function(err, result) {
     console.log('saved', err, result);
     if (err) next(err);
     if (!err) {
-      res.redirect('/login');
+      res.redirect('/account/login');
     }
   });
 });
@@ -63,7 +63,6 @@ router.post('/login', function(req, res, next) {
     if (err || !user) next(new Error('incorrect credentials'));
     if (!err) {
       req.session.user = user.username;
-      res.send('hi, you are logged in!');
       res.redirect('/');
     }
   });
