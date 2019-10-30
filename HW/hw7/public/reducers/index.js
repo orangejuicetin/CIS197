@@ -1,8 +1,8 @@
 // CIS 197 - React HW
 
-import _ from 'lodash'
-import * as timer from '../timer.js'
-import * as initialState from '../initialState.js'
+import _ from 'lodash';
+import * as timer from '../timer.js';
+import * as initialState from '../initialState.js';
 
 // Every time an action is dispatched, this function is called.
 // Using the current state and the action just performed (along with
@@ -29,27 +29,48 @@ import * as initialState from '../initialState.js'
 const mainReducer = (state, action) => {
   switch (action.type) {
     case 'RUN':
-      timer.run()
-      return state
+      timer.run();
+      return state;
 
-    case 'EXPORT_MAP': {
-      let data = encodeURIComponent(state.cells)
-      return (document.location = `/export?data=[${data}]`)
-    }
+    case 'EXPORT_MAP':
+      let data = encodeURIComponent(state.cells);
+      return (document.location = `/export?data=[${data}]`);
 
-    case 'CELL_CLICKED': {
-      let cells = state.cells.slice(0)
-      cells[action.index] = !cells[action.index]
-      return _.assign({}, state, { cells: cells })
-    }
+    case 'CELL_CLICKED':
+      let cells = state.cells.slice(0);
+      cells[action.index] = !cells[action.index];
+      return _.assign({}, state, { cells: cells });
+
+    case 'STOP':
+      timer.stop();
+      return state;
+
+    case 'STEP':
+      return _.assign({}, state, { cells: updateCells(state) });
+
+    case 'CLEAR':
+      timer.stop();
+      return _.assign({}, state, { cells: initialState.cells });
+
+    case 'RANDOM_SEED':
+      return _.assign({}, state, { cells: randomSeed(state) });
+
+    case 'IMPORT_SEED':
+      return _.assign({}, state, { cells: action.seed });
   }
-  return state
-}
+  return state;
+};
 
 const randomSeed = state => {
-  // TODO: Return a (NEW) randomly generated array of true/false values
-  // the same length as state.cells
-}
+  return state.cells.map(() => {
+    let roll = Math.random();
+    if (roll > 0.5) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+};
 
 // This is the main algorithm behind the Game of Life simulation.
 // Every time it is called, it computes based on the current state's
@@ -68,31 +89,31 @@ const randomSeed = state => {
 //     as if by reproduction.
 //
 const updateCells = state => {
-  let newCells = new Array(state.cells.length)
+  let newCells = new Array(state.cells.length);
   state.cells.map((_, i) => {
-    let cell = state.cells[i]
-    let live_neighbors = 0
-    let x = i % state.x
-    let y = Math.floor(i / state.x)
-    let l = x !== 0 && i - 1
-    let r = x !== state.x - 1 && i + 1
-    let t = y !== 0 && i - state.x
-    let b = y !== state.y - 1 && i + state.x
+    let cell = state.cells[i];
+    let live_neighbors = 0;
+    let x = i % state.x;
+    let y = Math.floor(i / state.x);
+    let l = x !== 0 && i - 1;
+    let r = x !== state.x - 1 && i + 1;
+    let t = y !== 0 && i - state.x;
+    let b = y !== state.y - 1 && i + state.x;
 
-    let tl, tr, bl, br
-    l && t && (tl = l - state.x)
-    l && b && (bl = l + state.x)
-    r && t && (tr = r - state.x)
-    r && b && (br = r + state.x)
-    ;[l, r, t, b, tl, bl, tr, br].map(n => {
-      state.cells[n] && live_neighbors++
-    })
+    let tl, tr, bl, br;
+    l && t && (tl = l - state.x);
+    l && b && (bl = l + state.x);
+    r && t && (tr = r - state.x);
+    r && b && (br = r + state.x);
+    [l, r, t, b, tl, bl, tr, br].map(n => {
+      state.cells[n] && live_neighbors++;
+    });
 
     newCells[i] =
       (cell && (live_neighbors === 2 || live_neighbors === 3)) ||
-      live_neighbors === 3
-  })
-  return newCells
-}
+      live_neighbors === 3;
+  });
+  return newCells;
+};
 
-export { mainReducer, updateCells, randomSeed }
+export { mainReducer, updateCells, randomSeed };

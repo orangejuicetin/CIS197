@@ -1,11 +1,10 @@
 // CIS 197 - React HW
 
-import _ from 'lodash'
-import React from 'react'
-import Cell from './Cell'
-import * as initialState from '../initialState.js'
-import * as actions from '../actions/index.js'
-
+import _ from 'lodash';
+import React from 'react';
+import Cell from './Cell';
+import * as initialState from '../initialState.js';
+import * as actions from '../actions/index.js';
 
 export default class GameOfLife extends React.Component {
   // Here we subscribe to changes in the store data and update
@@ -16,36 +15,65 @@ export default class GameOfLife extends React.Component {
   //       access this.state.cells and this.state.x and this.state.y.
   //       For these attributes, be sure to use this.state and not this.props
   constructor() {
-    super()
-    this.state = initialState
+    super();
+    this.state = initialState;
 
-    this.onImportSeed = this.onImportSeed.bind(this)
-    this.onRun = this.onRun.bind(this)
-    this.onStep = this.onStep.bind(this)
-    this.onStop = this.onStop.bind(this)
-    this.onClear = this.onClear.bind(this)
-    this.onExportMap = this.onExportMap.bind(this)
-    this.onRandomSeed = this.onRandomSeed.bind(this)
+    this.onImportSeed = this.onImportSeed.bind(this);
+    this.onRun = this.onRun.bind(this);
+    this.onStep = this.onStep.bind(this);
+    this.onStop = this.onStop.bind(this);
+    this.onClear = this.onClear.bind(this);
+    this.onExportMap = this.onExportMap.bind(this);
+    this.onRandomSeed = this.onRandomSeed.bind(this);
   }
 
   componentDidMount() {
-    const { store } = this.props
+    const { store } = this.props;
     store.subscribe(
       function() {
-        this.setState(store.getState())
+        this.setState(store.getState());
       }.bind(this)
-    )
+    );
   }
 
   onImportSeed(seedName) {
-    const { store } = this.props
-    store.dispatch(actions.importSeed(seedName))
+    const { store } = this.props;
+    store.dispatch(actions.importSeed(seedName));
   }
 
   // TODO: here you'll want to implement the functions that get called
   //       when various actions (such as button clicks) occur in thie view.
   //       These functions should, like onImportSeed above, dispatch the
   //       appropriate actions using the Redux store prop.
+  onRun() {
+    const { store } = this.props;
+    store.dispatch(actions.run());
+  }
+
+  onStep() {
+    const { store } = this.props;
+    store.dispatch(actions.step());
+  }
+
+  onStop() {
+    const { store } = this.props;
+    store.dispatch(actions.stop());
+  }
+
+  onClear() {
+    const { store } = this.props;
+    store.dispatch(actions.clear());
+  }
+
+  onExportMap() {
+    const { store } = this.props;
+    store.dispatch(actions.exportMap());
+  }
+
+  onRandomSeed() {
+    const { store } = this.props;
+    store.dispatch(actions.randomSeed());
+  }
 
   // TODO: Generate the following HTML structure:
   // <div class="game-component">
@@ -81,5 +109,32 @@ export default class GameOfLife extends React.Component {
   // HINT: Remember that the application state's `x`, `y`, and `cells` values
   //       are located in this.state and not this.props.
   render() {
+    console.log(this.state);
+    return (
+      <div className='game-component'>
+        <div className='board-component' style={{ width: this.state.x * 12 }}>
+          {this.state.cells.map((e, i) => (
+            <Cell store={this.props.store} index={i} alive={e} />
+          ))}
+        </div>
+        <div className='controls'>
+          <h4>Controls</h4>
+          <button onClick={this.onRun}>run</button>
+          <button onClick={this.onStep}>step</button>
+          <button onClick={this.onStop}>stop</button>
+          <button onClick={this.onClear}>clear</button>
+          {/* <button onClick={this.onExportMap}>export map</button> */}
+        </div>
+        <div className='seeds'>
+          <button onClick={() => this.onImportSeed('GLIDER')}>glider</button>
+          <button onClick={() => this.onImportSeed('GLIDER_GUN')}>
+            glider gun
+          </button>
+          <button onClick={() => this.onImportSeed('ACORN')}>acorn</button>
+          <button onClick={() => this.onImportSeed('LINE')}>line</button>
+          <button onClick={this.onRandomSeed}>random</button>
+        </div>
+      </div>
+    );
   }
 }

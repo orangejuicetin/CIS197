@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "compile": "./scripts/compile.sh",
-    "start": "concurrently \"nodemon --exec babel-node app.js\" \"webpack --watch\"",
+    "dev": "nodemon --exec babel-node app.js",
+    "watch": "webpack --watch",
     "test": "mocha --require @babel/register",
     "serve": "node public/build/app.js",
     "lint": "node scripts/lint.js",
