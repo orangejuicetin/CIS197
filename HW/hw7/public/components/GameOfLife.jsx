@@ -109,7 +109,6 @@ export default class GameOfLife extends React.Component {
   // HINT: Remember that the application state's `x`, `y`, and `cells` values
   //       are located in this.state and not this.props.
   render() {
-    console.log(this.state);
     return (
       <div className='game-component'>
         <div className='board-component' style={{ width: this.state.x * 12 }}>
